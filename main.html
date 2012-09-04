@@ -5,9 +5,12 @@
     src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js"></script>
     <script type="text/javascript" src="main.js"></script>
     <script type="text/javascript">
-      $.ready(
+      $(document).ready(function(){
       console.log('all systems go')
-      )
+      var testModel = id3(examples,'play',features);
+      var testResult = predict(testModel,sample1);
+
+      });
     </script>
   </head>
   <body>

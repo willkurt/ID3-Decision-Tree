@@ -38,7 +38,10 @@ window.examples = [
 ];
 
 window.examples = _(window.examples);
-
+window.features = ['outlook', 'temp', 'humidity', 'wind'];
+window.sample1 = {outlook:'Overcast', temp:'Mild', humidity:'High', wind: 'Strong'};
+window.sample2 = {outlook:'Rain', temp:'Mild', humidity:'High', wind: 'Strong'};
+window.sample3 = {outlook:'Sunny', temp:'Cool', humidity:'Normal', wind: 'Weak'};
 
 var prob = function(val,vals){
     var instances = _.filter(vals,function(x) {return x === val}).length;
@@ -57,14 +60,58 @@ var entropy = function(vals){
     return logVals.reduce(function(a,b){return a+b},0);
 }
 
-var gain = function(_s,target,attribute){
-    var attrVals = _.unique(_s.pluck(attribute));
+var gain = function(_s,target,feature){
+    var attrVals = _.unique(_s.pluck(feature));
     var setEntropy = entropy(_s.pluck(target));
     var setSize = _s.size();
     var entropies = attrVals.map(function(n){
-	var subset = _s.filter(function(x){return x[attribute] === n});
+	var subset = _s.filter(function(x){return x[feature] === n});
 	return (subset.length/setSize)*entropy(_.pluck(subset,target));
     });
     var sumOfEntropies =  entropies.reduce(function(a,b){return a+b},0);
     return setEntropy - sumOfEntropies;
 }
+
+var maxGain = function(_s,target,features){
+    return _.max(features,function(e){return gain(_s,target,e)});
+}
+
+var id3 = function(_s,target,features){
+    var targets = _.unique(_s.pluck(target));
+    if (targets.length == 1){
+	console.log("end node! "+targets[0]);
+	return {type:"result", val: targets[0]}; //this needs to be changed!!
+    }
+    if(features.length == 0){
+	console.log("returning the most dominate feature!!!");
+	return {type:"result", val: targets[0]}; //this needs to be changed!!
+    }
+    var bestFeature = maxGain(_s,target,features);
+    var remainingFeatures = _.without(features,bestFeature);
+    var possibleValues = _.unique(_s.pluck(bestFeature));
+    console.log("node for "+bestFeature);
+    var node = {name: bestFeature};
+    node.type = "feature";
+    node.vals = _.map(possibleValues,function(v){
+	console.log("creating a branch for "+v);
+	var _newS = _(_s.filter(function(x) {return x[bestFeature] == v}));
+	var child_node = {name:v,type: "feature_value"};
+	child_node.child =  id3(_newS,target,remainingFeatures);
+	return child_node;
+	
+    });
+    return node;
+}
+
+var predict = function(id3Model,sample) {
+    root = id3Model;
+    while(root.type != "result"){
+	var attr = root.name;
+	var sampleVal = sample[attr];
+	var childNode = _.detect(root.vals,function(x){return x.name == sampleVal});
+	root = childNode.child;
+    }
+    return root.val;
+}
+
+

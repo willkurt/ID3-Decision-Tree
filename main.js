@@ -35,18 +35,36 @@ window.examples = [
 {day:'D12',outlook:'Overcast', temp:'Mild', humidity:'High', wind: 'Strong',play:'Yes'},
 {day:'D13',outlook:'Overcast', temp:'Hot', humidity:'Normal', wind: 'Weak',play:'Yes'},
 {day:'D14',outlook:'Rain', temp:'Mild', humidity:'High', wind: 'Strong',play:'No'}
-]
+];
 
-window.examples = _(window.examples)
+window.examples = _(window.examples);
 
-var entropyForVar = function(set,val,target){
-    
+
+var prob = function(val,vals){
+    var instances = _.filter(vals,function(x) {return x === val}).length;
+    var total = vals.length;
+    return instances/total;
 }
 
-var gainForVar = function(set,val,target){
-    
+var log2 = function(n){
+    return Math.log(n)/Math.log(2);
 }
 
-var highestGain = function(set,possible_vars){
+var entropy = function(vals){
+    var uniqueVals = _.unique(vals);
+    var probs = uniqueVals.map(function(x){return prob(x,vals)});
+    var logVals = probs.map(function(p){return -p*log2(p) });
+    return logVals.reduce(function(a,b){return a+b},0);
+}
 
+var gain = function(_s,target,attribute){
+    var attrVals = _.unique(_s.pluck(attribute));
+    var setEntropy = entropy(_s.pluck(target));
+    var setSize = _s.size();
+    var entropies = attrVals.map(function(n){
+	var subset = _s.filter(function(x){return x[attribute] === n});
+	return (subset.length/setSize)*entropy(_.pluck(subset,target));
+    });
+    var sumOfEntropies =  entropies.reduce(function(a,b){return a+b},0);
+    return setEntropy - sumOfEntropies;
 }

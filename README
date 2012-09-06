@@ -7,3 +7,5 @@ In the example the tree is only doing binary classification
 but is also capable of handling n-ary classification, as well an non-binary feature values.
 
 main.html gives a visualization of the output tree
+
+See the project at: http://willkurt.github.com/ID3-Decision-Tree/

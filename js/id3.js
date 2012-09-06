@@ -89,6 +89,8 @@ var drawGraph = function(id3Model,divId){
     layouter.layout();
     var renderer = new Graph.Renderer.Raphael(divId, g, 800, 600);
     renderer.draw();
+	//fix those awkwardly named 'Yes 123' edges
+	$(_.select($('tspan'),function(e){return $(e).text().indexOf('Yes') > -1})).text('Yes');
 }
 
 var addEdges = function(node,g){

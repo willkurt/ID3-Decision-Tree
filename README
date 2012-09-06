@@ -1,0 +1,9 @@
+ID3.js 
+
+This is an example implementation of the ID3 decision tree algorithm
+http://en.wikipedia.org/wiki/ID3_algorithm
+
+In the example the tree is only doing binary classification
+but is also capable of handling n-ary classification, as well an non-binary feature values.
+
+main.html gives a visualization of the output tree

@@ -20,7 +20,7 @@
 // D13	Overcast	Hot	Normal	Weak	Yes
 // D14	Rain	Mild	High	Strong	No
 
-window.examples = [
+var examples = [
 {day:'D1',outlook:'Sunny', temp:'Hot', humidity:'High', wind: 'Weak',play:'No'},
 {day:'D2',outlook:'Sunny', temp:'Hot', humidity:'High', wind: 'Strong',play:'No'},
 {day:'D3',outlook:'Overcast', temp:'Hot', humidity:'High', wind: 'Weak',play:'Yes'},
@@ -37,11 +37,13 @@ window.examples = [
 {day:'D14',outlook:'Rain', temp:'Mild', humidity:'High', wind: 'Strong',play:'No'}
 ];
 
-window.examples = _(window.examples);
-window.features = ['outlook', 'temp', 'humidity', 'wind'];
-window.sample1 = {outlook:'Overcast', temp:'Mild', humidity:'High', wind: 'Strong'};
-window.sample2 = {outlook:'Rain', temp:'Mild', humidity:'High', wind: 'Strong'};
-window.sample3 = {outlook:'Sunny', temp:'Cool', humidity:'Normal', wind: 'Weak'};
+examples = _(examples);
+var features = ['outlook', 'temp', 'humidity', 'wind'];
+var samples = [{outlook:'Overcast', temp:'Mild', humidity:'High', wind: 'Strong'},
+	       {outlook:'Rain', temp:'Mild', humidity:'High', wind: 'Strong'},
+	       {outlook:'Sunny', temp:'Cool', humidity:'Normal', wind: 'Weak'}]
+
+
 
 var prob = function(val,vals){
     var instances = _.filter(vals,function(x) {return x === val}).length;
@@ -80,11 +82,11 @@ var id3 = function(_s,target,features){
     var targets = _.unique(_s.pluck(target));
     if (targets.length == 1){
 	console.log("end node! "+targets[0]);
-	return {type:"result", val: targets[0]}; //this needs to be changed!!
+	return {type:"result", val: targets[0], name: targets[0]+" "+Math.round(Math.random()*10000).toString()}; //this needs to be changed!!
     }
     if(features.length == 0){
 	console.log("returning the most dominate feature!!!");
-	return {type:"result", val: targets[0]}; //this needs to be changed!!
+	return {type:"result", val: targets[0], name: targets[0]}; //this needs to be changed!!
     }
     var bestFeature = maxGain(_s,target,features);
     var remainingFeatures = _.without(features,bestFeature);
@@ -103,6 +105,35 @@ var id3 = function(_s,target,features){
     return node;
 }
 
+var drawGraph = function(id3Model,divId){
+    var g = new Graph();
+    g.edgeFactory.template.style.directed = true;
+    g = addEdges(id3Model,g);
+//    var layouter = new Graph.Layout.Ordered(g, topological_sort(g));
+    var layouter = new Graph.Layout.Spring(g);
+    layouter.layout();
+    var renderer = new Graph.Renderer.Raphael(divId, g, 800, 600);
+    renderer.draw();
+}
+
+var addEdges = function(node,g){
+    if(node.type == 'feature'){
+	_.each(node.vals,function(m){
+	    g.addEdge(node.name,m.name);
+	    g = addEdges(m,g);
+	});
+	return g;
+    }
+    if(node.type == 'feature_value'){
+	g.addEdge(node.name,node.child.name);
+	if(node.child.type != 'result'){
+	    g = addEdges(node.child,g);
+	}
+	return g;
+    }
+    return g;
+}
+
 var predict = function(id3Model,sample) {
     root = id3Model;
     while(root.type != "result"){
@@ -114,4 +145,14 @@ var predict = function(id3Model,sample) {
     return root.val;
 }
 
+var renderSamples = function(samples,$el,model){
+    _.each(samples,function(s){
+	$el.append("<tr><td>"+[s.outlook,s.temp,s.humidity,s.wind].join('</td><td>')+"</td><td><b>"+predict(model,s)+"</b></td></tr>");
+    })
+}
 
+var renderTrainingData = function(_training,$el){
+    _training.each(function(s){
+	$el.append("<tr><td>"+[s.outlook,s.temp,s.humidity,s.wind,s.play].join('</td><td>')+"</td></tr>");
+    })
+}

@@ -1,15 +1,49 @@
-//main source file
-//this is a bit messy, just want to get everything running
+//ID3 Decision Tree Algorithm
 
-var prob = function(val,vals){
-    var instances = _.filter(vals,function(x) {return x === val}).length;
-    var total = vals.length;
-    return instances/total;
+
+//main algorithm and prediction functions
+
+var id3 = function(_s,target,features){
+    var targets = _.unique(_s.pluck(target));
+    if (targets.length == 1){
+	console.log("end node! "+targets[0]);
+	return {type:"result", val: targets[0], name: targets[0]+" "+Math.round(Math.random()*10000).toString()}; 
+    }
+    if(features.length == 0){
+	console.log("returning the most dominate feature!!!");
+	return {type:"result", val: targets[0], name: targets[0]}; //this needs to be changed!!
+    }
+    var bestFeature = maxGain(_s,target,features);
+    var remainingFeatures = _.without(features,bestFeature);
+    var possibleValues = _.unique(_s.pluck(bestFeature));
+    console.log("node for "+bestFeature);
+    var node = {name: bestFeature};
+    node.type = "feature";
+    node.vals = _.map(possibleValues,function(v){
+	console.log("creating a branch for "+v);
+	var _newS = _(_s.filter(function(x) {return x[bestFeature] == v}));
+	var child_node = {name:v,type: "feature_value"};
+	child_node.child =  id3(_newS,target,remainingFeatures);
+	return child_node;
+	
+    });
+    return node;
 }
 
-var log2 = function(n){
-    return Math.log(n)/Math.log(2);
+var predict = function(id3Model,sample) {
+    root = id3Model;
+    while(root.type != "result"){
+	var attr = root.name;
+	var sampleVal = sample[attr];
+	var childNode = _.detect(root.vals,function(x){return x.name == sampleVal});
+	root = childNode.child;
+    }
+    return root.val;
 }
+
+
+
+//necessary math functions
 
 var entropy = function(vals){
     var uniqueVals = _.unique(vals);
@@ -34,32 +68,17 @@ var maxGain = function(_s,target,features){
     return _.max(features,function(e){return gain(_s,target,e)});
 }
 
-var id3 = function(_s,target,features){
-    var targets = _.unique(_s.pluck(target));
-    if (targets.length == 1){
-	console.log("end node! "+targets[0]);
-	return {type:"result", val: targets[0], name: targets[0]+" "+Math.round(Math.random()*10000).toString()}; //this needs to be changed!!
-    }
-    if(features.length == 0){
-	console.log("returning the most dominate feature!!!");
-	return {type:"result", val: targets[0], name: targets[0]}; //this needs to be changed!!
-    }
-    var bestFeature = maxGain(_s,target,features);
-    var remainingFeatures = _.without(features,bestFeature);
-    var possibleValues = _.unique(_s.pluck(bestFeature));
-    console.log("node for "+bestFeature);
-    var node = {name: bestFeature};
-    node.type = "feature";
-    node.vals = _.map(possibleValues,function(v){
-	console.log("creating a branch for "+v);
-	var _newS = _(_s.filter(function(x) {return x[bestFeature] == v}));
-	var child_node = {name:v,type: "feature_value"};
-	child_node.child =  id3(_newS,target,remainingFeatures);
-	return child_node;
-	
-    });
-    return node;
+var prob = function(val,vals){
+    var instances = _.filter(vals,function(x) {return x === val}).length;
+    var total = vals.length;
+    return instances/total;
 }
+
+var log2 = function(n){
+    return Math.log(n)/Math.log(2);
+}
+
+//Display logic
 
 var drawGraph = function(id3Model,divId){
     var g = new Graph();
@@ -90,16 +109,6 @@ var addEdges = function(node,g){
     return g;
 }
 
-var predict = function(id3Model,sample) {
-    root = id3Model;
-    while(root.type != "result"){
-	var attr = root.name;
-	var sampleVal = sample[attr];
-	var childNode = _.detect(root.vals,function(x){return x.name == sampleVal});
-	root = childNode.child;
-    }
-    return root.val;
-}
 
 var renderSamples = function(samples,$el,model){
     _.each(samples,function(s){

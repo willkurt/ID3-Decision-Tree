@@ -116,14 +116,26 @@ var addEdges = function(node,g){
 var renderSamples = function(samples,$el,model,target,features){
     _.each(samples,function(s){
 	var features_for_sample = _.map(features,function(x){return s[x]});
-	console.log(features);
-	console.log(features_for_sample);
 	$el.append("<tr><td>"+features_for_sample.join('</td><td>')+"</td><td><b>"+predict(model,s)+"</b></td><td>actual: "+s[target]+"</td></tr>");
     })
 }
 
-var renderTrainingData = function(_training,$el,features){
+var renderTrainingData = function(_training,$el,target,features){
     _training.each(function(s){
-	$el.append("<tr><td>"+_.map(features,function(x){return s[x]}).join('</td><td>')+"</td></tr>");
+	$el.append("<tr><td>"+_.map(features,function(x){return s[x]}).join('</td><td>')+"</td><td>"+s[target]+"</td></tr>");
     })
+}
+
+var calcError = function(samples,model,target){
+    var total = 0;
+    var correct = 0;
+    _.each(samples,function(s){
+	total++;
+	var pred = predict(model,s);
+	var actual = s[target];
+	if(pred == actual){
+	    correct++;
+	}
+    });
+    return correct/total;
 }

@@ -23,7 +23,7 @@
       id3(examples_tic_tac_toe,'classification',features_tic_tac_toe);
            drawGraph(testModel,'canvas');
            renderSamples(samples_tic_tac_toe,$("#samples"),testModel,'classification',features_tic_tac_toe);
-           renderTrainingData(examples_tic_tac_toe,$("#training"),features_tic_tac_toe);
+           renderTrainingData(examples_tic_tac_toe,$("#training"),'classification',features_tic_tac_toe);
 });
 $("#fire_tennis").click(function(e){
            e.preventDefault();
@@ -31,7 +31,9 @@ $("#fire_tennis").click(function(e){
       id3(examples,'play',features);
            drawGraph(testModel,'canvas');
            renderSamples(samples,$("#samples"),testModel,'play',features);
-           renderTrainingData(examples,$("#training"),features);
+           renderTrainingData(examples,$("#training"),'play',features);
+      console.log("error");
+      console.log(calcError(samples,testModel,'play'));
 });
 
 

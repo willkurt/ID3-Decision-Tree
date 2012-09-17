@@ -23,14 +23,31 @@
     <script type="text/javascript"
     src="https://raw.github.com/strathausen/dracula/master/js/dracula_algorithms.js"></script>
     <script type="text/javascript" src="https://raw.github.com/willkurt/ID3-Decision-Tree/master/js/examples.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/willkurt/ID3-Decision-Tree/master/js/tic-tac-examples.js"></script>
     <script type="text/javascript" src="https://raw.github.com/willkurt/ID3-Decision-Tree/master/js/id3.js"></script>
     <script type="text/javascript">
       $(document).ready(function(){
+      $("#samples").html('');
+      $("#training").html('');
+      $("#canvas").html('');
+      $("#fire_tic_tac_toe").click(function(e){
+      e.preventDefault();
+      var testModel = id3(examples_tic_tac_toe,'classification',features_tic_tac_toe);
+      drawGraph(testModel,'canvas');
+      renderSamples(samples_tic_tac_toe,$("#samples"),testModel,'classification',features_tic_tac_toe);
+      renderTrainingData(examples_tic_tac_toe,$("#training"),features_tic_tac_toe);
+});
+      $("#fire_tennis").click(function(e){
+      e.preventDefault();
+      $("#samples").html('');
+      $("#training").html('');
+      $("#canvas").html('');
       var testModel = id3(examples,'play',features);
       drawGraph(testModel,'canvas');
-      renderSamples(samples,$("#samples"),testModel);
-      renderTrainingData(examples,$("#training"));
-
+           renderSamples(samples,$("#samples"),testModel,'play',features);
+      renderTrainingData(examples,$("#training"),features);
+      });
+      
       });
     </script>
 
@@ -41,7 +58,16 @@
         <h1>Id3-decision-tree</h1>
         <p>JavaScript Implementation of the ID3 Decision Tree
           algorithm with some basic visualization</p>
-        <p class="view"><a href="https://github.com/willkurt/ID3-Decision-Tree">View the Project on GitHub <small>willkurt/ID3-Decision-Tree</small></a></p>
+        <p class="view"><a href="https://github.com/willkurt/ID3-Decision-Tree">View
+        the Project on
+        GitHub <small>willkurt/ID3-Decision-Tree</small></a></p>
+<p>
+  <h3>Run the demos</h3>
+  <ul>
+    <li><a id="fire_tennis" href="#"> Tennis (fast)</a></li>
+    <li><a id="fire_tic_tac_toe" href="#">Tic-tac-toe (slower)</a></li>
+  </ul>
+</p>
 
 	
       <div id="canvas">
@@ -50,12 +76,12 @@
 <div>
 	  <h3>Sample Predictions</h3>
 	  <table id='samples'>
-	    <tr><th>outlook</th><th>temp</th><th>humidity</th><th>wind</th><th>prediction</th></tr>
+
 	  </table>
 
 	  <h3>Training Data</h3>
 	  <table id='training'>
-	    <tr><th>outlook</th><th>temp</th><th>humidity</th><th>wind</th><th>play?</th></tr>
+
 	  </table>
 </div>
 

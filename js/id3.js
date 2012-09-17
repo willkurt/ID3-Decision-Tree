@@ -92,6 +92,8 @@ var drawGraph = function(id3Model,divId){
 	//fix those awkwardly named 'Yes 123' edges
 	$(_.select($('tspan'),function(e){return $(e).text().indexOf('Yes ') > -1})).text('Yes');
 	$(_.select($('tspan'),function(e){return $(e).text().indexOf('No ') > -1})).text('No');
+	$(_.select($('tspan'),function(e){return $(e).text().indexOf('positive ') > -1})).text('positive');
+	$(_.select($('tspan'),function(e){return $(e).text().indexOf('negative ') > -1})).text('negative');
 }
 
 var addEdges = function(node,g){

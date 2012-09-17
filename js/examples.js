@@ -22,7 +22,7 @@ var examples = [
 
 examples = _(examples);
 var features = ['outlook', 'temp', 'humidity', 'wind'];
-var samples = [{outlook:'Overcast', temp:'Mild', humidity:'High', wind: 'Strong'},
-	       {outlook:'Rain', temp:'Mild', humidity:'High', wind: 'Strong'},
-	       {outlook:'Sunny', temp:'Cool', humidity:'Normal', wind: 'Weak'}]
+var samples = [{outlook:'Overcast', temp:'Mild', humidity:'High', wind: 'Strong',play: 'Yes'},
+	       {outlook:'Rain', temp:'Mild', humidity:'High', wind: 'Strong', play: 'No'},
+	       {outlook:'Sunny', temp:'Cool', humidity:'Normal', wind: 'Weak', plaly: 'Yes'}]
 

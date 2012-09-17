@@ -11,15 +11,29 @@
     <script type="text/javascript" src="https://raw.github.com/strathausen/dracula/master/js/dracula_graph.js"></script>
     <script type="text/javascript"
     src="https://raw.github.com/strathausen/dracula/master/js/dracula_algorithms.js"></script>
-    <script type="text/javascript" src="js/examples.js"></script>
+   <script type="text/javascript" src="js/examples.js"></script>
+   <script type="text/javascript" src="js/tic-tac-examples.js"></script>
     <script type="text/javascript" src="js/id3.js"></script>
     <script type="text/javascript">
       $(document).ready(function(){
       console.log('all systems go')
-      var testModel = id3(examples,'play',features);
-      drawGraph(testModel,'canvas');
-      renderSamples(samples,$("#samples"),testModel);
-      renderTrainingData(examples,$("#training"));
+      $("#fire_tic_tac_toe").click(function(e){
+           e.preventDefault();
+           var testModel =
+      id3(examples_tic_tac_toe,'classification',features_tic_tac_toe);
+           drawGraph(testModel,'canvas');
+           renderSamples(samples_tic_tac_toe,$("#samples"),testModel,'classification',features_tic_tac_toe);
+           renderTrainingData(examples_tic_tac_toe,$("#training"),features_tic_tac_toe);
+});
+$("#fire_tennis").click(function(e){
+           e.preventDefault();
+           var testModel =
+      id3(examples,'play',features);
+           drawGraph(testModel,'canvas');
+           renderSamples(samples,$("#samples"),testModel,'play',features);
+           renderTrainingData(examples,$("#training"),features);
+});
+
 
       });
     </script>
@@ -27,16 +41,16 @@
   <body>
     <div id="main">
       <h1>ID3 Algorithm</h1>
+<a id="fire_tennis" href="#">Run Tennis</a>
+<a id="fire_tic_tac_toe" href="#">Run Tic Tac Toe</a>
       <div id="data-container">
 	<div style="float:right" id='canvas'></div>
 	<div style="float:left">
 	  <h3>Sample Predictions</h3>
 	  <table id='samples'>
-	    <tr><th>outlook</th><th>temp</th><th>humidity</th><th>wind</th><th>prediction</th></tr>
 	  </table>
 	  <h3>Training Data</h3>
 	  <table id='training'>
-	    <tr><th>outlook</th><th>temp</th><th>humidity</th><th>wind</th><th>play?</th></tr>
 	  </table>
 	</div>
       </div>

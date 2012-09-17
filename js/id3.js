@@ -113,14 +113,17 @@ var addEdges = function(node,g){
 }
 
 
-var renderSamples = function(samples,$el,model){
+var renderSamples = function(samples,$el,model,target,features){
     _.each(samples,function(s){
-	$el.append("<tr><td>"+[s.outlook,s.temp,s.humidity,s.wind].join('</td><td>')+"</td><td><b>"+predict(model,s)+"</b></td></tr>");
+	var features_for_sample = _.map(features,function(x){return s[x]});
+	console.log(features);
+	console.log(features_for_sample);
+	$el.append("<tr><td>"+features_for_sample.join('</td><td>')+"</td><td><b>"+predict(model,s)+"</b></td><td>actual: "+s[target]+"</td></tr>");
     })
 }
 
-var renderTrainingData = function(_training,$el){
+var renderTrainingData = function(_training,$el,features){
     _training.each(function(s){
-	$el.append("<tr><td>"+[s.outlook,s.temp,s.humidity,s.wind,s.play].join('</td><td>')+"</td></tr>");
+	$el.append("<tr><td>"+_.map(features,function(x){return s[x]}).join('</td><td>')+"</td></tr>");
     })
 }

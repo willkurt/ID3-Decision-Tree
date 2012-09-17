@@ -30,14 +30,15 @@
           $("#samples tbody").children().remove();
           $("#training tbody").children().remove();
           $("#canvas").html('');
-          $(".status").html('building model');
+          console.log('building model');
           var testModel = id3(examples_tic_tac_toe,'classification',features_tic_tac_toe);
-          $(".status").html('drawing tree');
+          console.log('drawing tree');
           drawGraph(testModel,'canvas');
-          $(".status").html('predicting');
+          console.log('predicting');
           renderSamples(samples_tic_tac_toe,$("#samples"),testModel,'classification',features_tic_tac_toe);
-          renderTrainingData(examples_tic_tac_toe,$("#training"),features_tic_tac_toe);
-          $(".status").html('done!');
+          renderTrainingData(examples_tic_tac_toe,$("#training"),'classification',features_tic_tac_toe);
+          console.log('done!');
+          $("#error").html(calcError(samples_tic_tac_toe,testModel,'classification'));
 });
       $("#fire_tennis").click(function(e){
           e.preventDefault();
@@ -50,8 +51,9 @@
           drawGraph(testModel,'canvas');
           console.log('predicting');
           renderSamples(samples,$("#samples"),testModel,'play',features);
-          renderTrainingData(examples,$("#training"),features);
+          renderTrainingData(examples,$("#training"),'play',features);
           console.log('done!');
+          $("#error").html(calcError(samples,testModel,'play'));
       });
       
       });
@@ -80,7 +82,7 @@
       </div>
 
 <div>
-	  <h3>Sample Predictions</h3>
+	  <h3>Sample Predictions accuracy(<span id="error"></span>)</h3>
 	  <table id='samples'>
 
 	  </table>

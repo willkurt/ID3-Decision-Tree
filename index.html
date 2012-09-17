@@ -22,30 +22,36 @@
     <script type="text/javascript" src="https://raw.github.com/strathausen/dracula/master/js/dracula_graph.js"></script>
     <script type="text/javascript"
     src="https://raw.github.com/strathausen/dracula/master/js/dracula_algorithms.js"></script>
-    <script type="text/javascript" src="https://raw.github.com/willkurt/ID3-Decision-Tree/master/js/examples.js"></script>
-    <script type="text/javascript" src="https://raw.github.com/willkurt/ID3-Decision-Tree/master/js/tic-tac-examples.js"></script>
-    <script type="text/javascript" src="https://raw.github.com/willkurt/ID3-Decision-Tree/master/js/id3.js"></script>
+
     <script type="text/javascript">
       $(document).ready(function(){
-      $("#samples").html('');
-      $("#training").html('');
-      $("#canvas").html('');
       $("#fire_tic_tac_toe").click(function(e){
-      e.preventDefault();
-      var testModel = id3(examples_tic_tac_toe,'classification',features_tic_tac_toe);
-      drawGraph(testModel,'canvas');
-      renderSamples(samples_tic_tac_toe,$("#samples"),testModel,'classification',features_tic_tac_toe);
-      renderTrainingData(examples_tic_tac_toe,$("#training"),features_tic_tac_toe);
+          e.preventDefault();
+          $("#samples tbody").children().remove();
+          $("#training tbody").children().remove();
+          $("#canvas").html('');
+          $(".status").html('building model');
+          var testModel = id3(examples_tic_tac_toe,'classification',features_tic_tac_toe);
+          $(".status").html('drawing tree');
+          drawGraph(testModel,'canvas');
+          $(".status").html('predicting');
+          renderSamples(samples_tic_tac_toe,$("#samples"),testModel,'classification',features_tic_tac_toe);
+          renderTrainingData(examples_tic_tac_toe,$("#training"),features_tic_tac_toe);
+          $(".status").html('done!');
 });
       $("#fire_tennis").click(function(e){
-      e.preventDefault();
-      $("#samples").html('');
-      $("#training").html('');
-      $("#canvas").html('');
-      var testModel = id3(examples,'play',features);
-      drawGraph(testModel,'canvas');
-           renderSamples(samples,$("#samples"),testModel,'play',features);
-      renderTrainingData(examples,$("#training"),features);
+          e.preventDefault();
+          $("#samples tbody").children().remove();
+          $("#training tbody").children().remove();
+          $("#canvas").html('');
+          console.log('building model');
+          var testModel = id3(examples,'play',features);
+          console.log('drawing tree');
+          drawGraph(testModel,'canvas');
+          console.log('predicting');
+          renderSamples(samples,$("#samples"),testModel,'play',features);
+          renderTrainingData(examples,$("#training"),features);
+          console.log('done!');
       });
       
       });
@@ -95,5 +101,8 @@
         </ul>
 
       </div>
+    <script type="text/javascript" src="https://raw.github.com/willkurt/ID3-Decision-Tree/master/js/examples.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/willkurt/ID3-Decision-Tree/master/js/tic-tac-examples.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/willkurt/ID3-Decision-Tree/master/js/id3.js"></script>
   </body>
 </html>

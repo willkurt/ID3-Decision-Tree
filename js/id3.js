@@ -11,7 +11,8 @@ var id3 = function(_s,target,features){
     }
     if(features.length == 0){
 	console.log("returning the most dominate feature!!!");
-	return {type:"result", val: targets[0], name: targets[0], alias:targets[0]+randomTag()}; //this needs to be changed!!
+	var topTarget = mostCommon(targets);
+	return {type:"result", val: topTarget, name: topTarget, alias: topTarget+randomTag()};
     }
     var bestFeature = maxGain(_s,target,features);
     var remainingFeatures = _.without(features,bestFeature);
@@ -78,16 +79,24 @@ var log2 = function(n){
     return Math.log(n)/Math.log(2);
 }
 
+
+var mostCommon = function(l){
+   return  _.sortBy(l,function(a){
+	return count(a,l);
+    }).reverse()[0];
+}
+
+var count = function(a,l){
+    return _.filter(l,function(b) { return b === a}).length
+}
+
 var randomTag = function(){
-    return "_r"+Math.round(Math.random()*10000).toString();
+    return "_r"+Math.round(Math.random()*1000000).toString();
 }
 
 //Display logic
 
 var drawGraph = function(id3Model,divId){
-//    var g = sigma.init(document.getElementById('canvas'));
-//    g = addEdges(id3Model,g);
-//    g.draw();
     var g = new Array();
     g = addEdges(id3Model,g).reverse();
     window.g = g;
@@ -96,7 +105,6 @@ var drawGraph = function(id3Model,divId){
     google.visualization.events.addListener(chart, 'ready',function(){
     _.each($('.google-visualization-orgchart-node'),function(x){
 	var oldVal = $(x).html();
-	console.log(x);
 	if(oldVal){
 	    var cleanVal = oldVal.replace(/_r[0-9]+/,'');
 	    $(x).html(cleanVal);

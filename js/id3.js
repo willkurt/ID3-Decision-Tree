@@ -103,7 +103,7 @@ var drawGraph = function(id3Model,divId){
 	}
 }); 
     });
-    chart.draw(data, {allowHtml: true,size:'small'});
+    chart.draw(data, {allowHtml: true});
 
 }
 

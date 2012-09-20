@@ -71,10 +71,11 @@ pre {
   overflow-x: auto;
 }
 
-table {
+table.standard {
   width:100%;
   border-collapse:collapse;
 }
+
 
 th, td {
   text-align:left;

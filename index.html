@@ -15,52 +15,29 @@
     src="http://code.jquery.com/jquery-1.8.1.min.js"></script>
     <script type="text/javascript"
     src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js"></script>
+
+<script type='text/javascript'
+	src='https://www.google.com/jsapi?autoload={"modules":[{"name":"visualization","version":"1","packages":["orgchart"]}]}'></script>
     <script type="text/javascript"
-	    src="https://raw.github.com/strathausen/dracula/master/source/dracula_graph.js"></script>
-    <script type="text/javascript"
-	    src="https://raw.github.com/DmitryBaranovskiy/raphael/master/raphael-min.js"></script>
-    <script type="text/javascript" src="https://raw.github.com/strathausen/dracula/master/js/dracula_graffle.js"></script>
-    <script type="text/javascript" src="https://raw.github.com/strathausen/dracula/master/js/dracula_graph.js"></script>
+    src="./javascripts/helpers.js"></script>
     <script type="text/javascript"
     src="https://raw.github.com/strathausen/dracula/master/js/dracula_algorithms.js"></script>
 
     <script type="text/javascript">
       $(document).ready(function(){
+      
+       $("#fire_voting").click(function(e){
+          e.preventDefault();
+          buildDecisionTree(voting_examples,'classification',voting_features,voting_samples);
+      });
       $("#fire_tic_tac_toe").click(function(e){
           e.preventDefault();
-          $("#samples tbody").children().remove();
-          $("#training tbody").children().remove();
-          $("#canvas").html('');
-          console.log('building model');
-          var testModel =
-      id3(examples_tic_tac_toe,'classification',features_tic_tac_toe);
-          if($("#showTree:checked").length > 0){
-              console.log('drawing tree');
-              drawGraph(testModel,'canvas');
-          }
-          console.log('predicting');
-          renderSamples(samples_tic_tac_toe,$("#samples"),testModel,'classification',features_tic_tac_toe);
-          renderTrainingData(examples_tic_tac_toe,$("#training"),'classification',features_tic_tac_toe);
-          console.log('done!');
-          $("#error").html(calcError(samples_tic_tac_toe,testModel,'classification'));
-});
+          buildDecisionTree(examples_tic_tac_toe,'classification',features_tic_tac_toe,samples_tic_tac_toe);
+      });
       $("#fire_tennis").click(function(e){
           e.preventDefault();
-          $("#samples tbody").children().remove();
-          $("#training tbody").children().remove();
-          $("#canvas").html('');
-          console.log('building model');
-          var testModel = id3(examples,'play',features);
-          if($("#showTree:checked").length > 0){
-              console.log('drawing tree');
-              drawGraph(testModel,'canvas');
-          }
-          console.log('predicting');
-          renderSamples(samples,$("#samples"),testModel,'play',features);
-          renderTrainingData(examples,$("#training"),'play',features);
-          console.log('done!');
-          $("#error").html(calcError(samples,testModel,'play'));
-      });
+          buildDecisionTree(examples,'play',features,samples);
+       });
       
       });
     </script>
@@ -80,6 +57,7 @@
 <input type="checkbox" id="showTree" /> show tree
   <ul>
     <li><a id="fire_tennis" href="#"> Tennis (fast)</a></li>
+<li><a id="fire_voting" href="#">Voting</a></li>
     <li><a id="fire_tic_tac_toe" href="#">Tic-tac-toe (slower)</a></li>
   </ul>
 </p>
@@ -90,12 +68,12 @@
 
 <div>
 	  <h3>Sample Predictions accuracy(<span id="error"></span>)</h3>
-	  <table id='samples'>
+	  <table id='samples' class="standard">
 
 	  </table>
 
 	  <h3>Training Data</h3>
-	  <table id='training'>
+	  <table id='training' class="standard">
 
 	  </table>
 </div>
@@ -111,7 +89,9 @@
 
       </div>
     <script type="text/javascript" src="https://raw.github.com/willkurt/ID3-Decision-Tree/master/js/examples.js"></script>
-    <script type="text/javascript" src="https://raw.github.com/willkurt/ID3-Decision-Tree/master/js/tic-tac-examples.js"></script>
+    <script type="text/javascript"
+    src="https://raw.github.com/willkurt/ID3-Decision-Tree/master/js/tic-tac-examples.js"></script>
+   <script type="text/javascript" src="https://raw.github.com/willkurt/ID3-Decision-Tree/master/js/voting-examples.js"></script>
     <script type="text/javascript" src="https://raw.github.com/willkurt/ID3-Decision-Tree/master/js/id3.js"></script>
   </body>
 </html>

@@ -7,22 +7,22 @@ var id3 = function(_s,target,features){
     var targets = _.unique(_s.pluck(target));
     if (targets.length == 1){
 	console.log("end node! "+targets[0]);
-	return {type:"result", val: targets[0], name: targets[0]+" "+Math.round(Math.random()*10000).toString()}; 
+	return {type:"result", val: targets[0], name: targets[0],alias:targets[0]+randomTag() }; 
     }
     if(features.length == 0){
 	console.log("returning the most dominate feature!!!");
-	return {type:"result", val: targets[0], name: targets[0]}; //this needs to be changed!!
+	return {type:"result", val: targets[0], name: targets[0], alias:targets[0]+randomTag()}; //this needs to be changed!!
     }
     var bestFeature = maxGain(_s,target,features);
     var remainingFeatures = _.without(features,bestFeature);
     var possibleValues = _.unique(_s.pluck(bestFeature));
     console.log("node for "+bestFeature);
-    var node = {name: bestFeature};
+    var node = {name: bestFeature,alias: bestFeature+randomTag()};
     node.type = "feature";
     node.vals = _.map(possibleValues,function(v){
 	console.log("creating a branch for "+v);
 	var _newS = _(_s.filter(function(x) {return x[bestFeature] == v}));
-	var child_node = {name:v,type: "feature_value"};
+	var child_node = {name:v,alias:v+randomTag(),type: "feature_value"};
 	child_node.child =  id3(_newS,target,remainingFeatures);
 	return child_node;
 	
@@ -78,34 +78,46 @@ var log2 = function(n){
     return Math.log(n)/Math.log(2);
 }
 
+var randomTag = function(){
+    return "_r"+Math.round(Math.random()*10000).toString();
+}
+
 //Display logic
 
 var drawGraph = function(id3Model,divId){
-    var g = new Graph();
-    g.edgeFactory.template.style.directed = true;
-    g = addEdges(id3Model,g);
-//    var layouter = new Graph.Layout.Ordered(g, topological_sort(g));
-    var layouter = new Graph.Layout.Spring(g);
-    layouter.layout();
-    var renderer = new Graph.Renderer.Raphael(divId, g, 800, 600);
-    renderer.draw();
-	//fix those awkwardly named 'Yes 123' edges
-	$(_.select($('tspan'),function(e){return $(e).text().indexOf('Yes ') > -1})).text('Yes');
-	$(_.select($('tspan'),function(e){return $(e).text().indexOf('No ') > -1})).text('No');
-	$(_.select($('tspan'),function(e){return $(e).text().indexOf('positive ') > -1})).text('positive');
-	$(_.select($('tspan'),function(e){return $(e).text().indexOf('negative ') > -1})).text('negative');
+//    var g = sigma.init(document.getElementById('canvas'));
+//    g = addEdges(id3Model,g);
+//    g.draw();
+    var g = new Array();
+    g = addEdges(id3Model,g).reverse();
+    window.g = g;
+    var data = google.visualization.arrayToDataTable(g.concat(g));
+    var chart = new google.visualization.OrgChart(document.getElementById(divId));
+    google.visualization.events.addListener(chart, 'ready',function(){
+    _.each($('.google-visualization-orgchart-node'),function(x){
+	var oldVal = $(x).html();
+	console.log(x);
+	if(oldVal){
+	    var cleanVal = oldVal.replace(/_r[0-9]+/,'');
+	    $(x).html(cleanVal);
+	}
+}); 
+    });
+    chart.draw(data, {allowHtml: true,size:'small'});
+
 }
 
 var addEdges = function(node,g){
     if(node.type == 'feature'){
 	_.each(node.vals,function(m){
-	    g.addEdge(node.name,m.name);
+	    g.push([m.alias,node.alias,'']);
 	    g = addEdges(m,g);
 	});
 	return g;
     }
     if(node.type == 'feature_value'){
-	g.addEdge(node.name,node.child.name);
+
+	g.push([node.child.alias,node.alias,'']);
 	if(node.child.type != 'result'){
 	    g = addEdges(node.child,g);
 	}

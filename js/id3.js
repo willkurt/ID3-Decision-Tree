@@ -32,7 +32,7 @@ var id3 = function(_s,target,features){
 }
 
 var predict = function(id3Model,sample) {
-    root = id3Model;
+    var root = id3Model;
     while(root.type != "result"){
 	var attr = root.name;
 	var sampleVal = sample[attr];

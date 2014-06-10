@@ -9,3 +9,5 @@ but is also capable of handling n-ary classification, as well an non-binary feat
 main.html gives a visualization of the output tree
 
 See the project at: http://willkurt.github.com/ID3-Decision-Tree/
+
+This project is licensed under The MIT License http://opensource.org/licenses/MIT

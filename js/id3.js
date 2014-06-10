@@ -11,7 +11,7 @@ var id3 = function(_s,target,features){
     }
     if(features.length == 0){
 	console.log("returning the most dominate feature!!!");
-	var topTarget = mostCommon(targets);
+	var topTarget = mostCommon(_s.pluck(target));
 	return {type:"result", val: topTarget, name: topTarget, alias: topTarget+randomTag()};
     }
     var bestFeature = maxGain(_s,target,features);
